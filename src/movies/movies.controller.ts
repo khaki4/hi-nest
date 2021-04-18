@@ -23,8 +23,8 @@ export class MoviesController {
   }
 
   @Get('/:id')
-  getOne(@Param('id') moviewId: number): Movie {
-    return this.moviesService.getOne(moviewId);
+  getOne(@Param('id') movieId: number): Movie {
+    return this.moviesService.getOne(movieId);
   }
 
   @Post()
