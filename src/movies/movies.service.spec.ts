@@ -46,4 +46,40 @@ describe('MoviesService', () => {
       }
     });
   });
+
+  describe('deleteOne()', () => {
+    it('deletes a move', () => {
+      service.create({
+        title: 'Test Movie',
+        year: 2021,
+        genres: ['test'],
+      });
+      const allMovies = service.getAll();
+      service.deleteOne(allMovies[0].id);
+      const afterDelete = service.getAll();
+
+      expect(afterDelete.length).toEqual(allMovies.length - 1);
+    });
+
+    it('should return a 404', () => {
+      try {
+        service.deleteOne(999);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('create()', () => {
+    it('should create a movie', () => {
+      const prevMovies = service.getAll().length;
+      service.create({
+        title: 'Test Movie',
+        year: 2021,
+        genres: ['test'],
+      });
+      const nextMovies = service.getAll().length;
+      expect(nextMovies).toBeGreaterThan(prevMovies);
+    });
+  });
 });
