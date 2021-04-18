@@ -2,6 +2,14 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MoviesService } from './movies.service';
 
+const createMovie = (service: MoviesService) => {
+  service.create({
+    title: 'Test Movie',
+    year: 2021,
+    genres: ['test'],
+  });
+};
+
 describe('MoviesService', () => {
   let service: MoviesService;
 
@@ -26,11 +34,7 @@ describe('MoviesService', () => {
 
   describe('getOne()', () => {
     it('should return a movie', () => {
-      service.create({
-        title: 'Test Movie',
-        year: 2021,
-        genres: ['test'],
-      });
+      createMovie(service);
       const movie = service.getOne(1);
       expect(movie).toBeDefined();
       expect(movie.id).toEqual(1);
@@ -73,13 +77,28 @@ describe('MoviesService', () => {
   describe('create()', () => {
     it('should create a movie', () => {
       const prevMovies = service.getAll().length;
-      service.create({
-        title: 'Test Movie',
-        year: 2021,
-        genres: ['test'],
-      });
+      createMovie(service);
       const nextMovies = service.getAll().length;
       expect(nextMovies).toBeGreaterThan(prevMovies);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a movie', () => {
+      createMovie(service);
+      const movieId = 1;
+      const updatedTitle = 'Updated Test';
+      service.update(movieId, { title: updatedTitle });
+      const movie = service.getOne(movieId);
+      expect(movie.title).toEqual(updatedTitle);
+    });
+
+    it('shout throw a NotFoundException', () => {
+      try {
+        service.update(999, {});
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
     });
   });
 });
